@@ -20,3 +20,14 @@ img {
 button.abstract {
     margin: 5px;
 }
+
+#map {
+    height: 60%;
+    width: 40%;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
