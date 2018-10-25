@@ -1,3 +1,23 @@
+$(".navbar-toggler").on("click", function(){
+
+    console.log($("#navbarToggleExternalContent").css("display"));
+    
+    if($("#navbarToggleExternalContent").css("display") === "none"){
+        $("#navbarToggleExternalContent").css("display", "unset");
+    }
+    else if($("#navbarToggleExternalContent").css("display") === "unset") {
+        $("#navbarToggleExternalContent").css("display", "none");
+    }
+})
+
+var map;
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 40.730610, lng: -73.935242},
+    zoom: 8
+  });
+}
+
 var gifMachine = {
     topics: ['mcdonalds',
         'burger king',
@@ -11,123 +31,108 @@ var gifMachine = {
         'outback'
     ],
 
-    giphyJax: function() {
-
-    },
-
-    weatherJax: function() {
-        var query_param1 = "Santa Monica";
-        var appID2 = "ad2a32bbb65b8db270ee6f7c72514b20";
-        var queryURL2 = "http://api.openweathermap.org/data/2.5/weather?q=" + query_param1 + "&APPID=" + appID2;
-        console.log(this.topics[3]);
-        
-
-        $.ajax({
-            url: queryURL2,
-            method: 'GET'
-        }).done(function(response) {
-            console.log("Weather");
-            console.log(response);
-        });
-
-
-    },
-
     buttonGenerator: function() {
         $('#buttonGroup').empty();
         for (i = 0; i < this.topics.length; i++) {
             var bttn = $('<button />', {
                 "class": 'abstract btn waves-effect',
-                "data-value": this.topics[i].replace(" ", "+"),
+                "data-value": this.topics[i],
                 text: this.topics[i]
             });
             $('#buttonGroup').append(bttn);
-
         }
     }
-
-
 };
-
-
 
 gifMachine.buttonGenerator();
 
-
 $(document).ready(function() {
-    Materialize.updateTextFields();
     gifMachine.buttonGenerator();
-
 });
 
+$(document).on("click", "#submitSearch", function(e){
+    e.preventDefault();
 
+    var param = "";
 
+    $("restaurantList").empty();
 
+    var city = $("#city").val();
+    console.log(city);
+
+    var userKey = "23c62f98e8626382f65fe3b8fb2ba93f";
+
+    var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
+    console.log(query);
+
+    $.ajax({
+        url: query,
+        method: "GET"
+    }).then(function(response){
+        console.log(response);
+        var entityID;
+        var entityType;
+        for(var i=0; i<response.location_suggestions.length; i++){
+            console.log(response.location_suggestions);
+            // console.log(response.location_suggestions[0].city_id);
+            entityID = response.location_suggestions[0].entity_id;
+            entityType = response.location_suggestions[0].entity_type;
+        }
+        console.log("ID: "+entityID);
+        console.log("Type: "+entityType);
+        
+        var entity = "entity_id="+entityID;
+        var entityTy = "&entity_type="+entityType;
+        
+        var queryDetail = "https://developers.zomato.com/api/v2.1/location_details?apikey=23c62f98e8626382f65fe3b8fb2ba93f&"+entity+entityTy;
+        console.log(queryDetail);
+
+        $.ajax({
+            url: queryDetail,
+            method: "GET"
+        }).then(function(result){
+            console.log(result);
+            for(var j=0; j<result.best_rated_restaurant.length; j++){
+                console.log(result.best_rated_restaurant[j]);
+
+                var itemDiv = $("<div class= card search-snippet-card search-card>");
+                
+                var itemCont = itemDiv.html("<div class= content>");
+
+                var restName = itemCont.html("<h1 class=restName>")
+
+                restName.append(result.best_rated_restaurant[j].restaurant.name);
+
+                $("#restaurantList").append(itemDiv);
+            }
+        });
+    });
+});
 
 $(document).on("click", ".abstract", function() {
-    $(".gifGuts").empty();
-    $(".abstract").removeClass("active");
+    $(".gifs").empty();
+    var foodPlace = $(this).attr("data-value").trim();
+    console.log(foodPlace);
 
-    $(this).addClass("active");
-
-    var appID = "dc6zaTOxFJmzC" + "&limit=10"; // public
-
-    var query_param = $(this).attr("data-value");
-
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + query_param + "&api_key=" + appID;
-    $(".abstract").removeClass("active");
-
+    var queryURL = "https://nutritionix-api.p.mashape.com/v1_1/search/"+foodPlace;
+    console.log(queryURL);
 
     $.ajax({
             url: queryURL,
-            method: "GET"
-        })
-        .done(function(response) {
-            var returns = response.data;
-
-
-
-            for (var i = 0; i < returns.length; i++) {
-                var abstractDiv = $("<div class=\"abstract-item col s6 m4 l2\">");
-
-                var rating = returns[i].rating;
-
-
-                var animation = returns[i].images.fixed_height.url;
-                var still = returns[i].images.fixed_height_still.url;
-                var p = $("<div class='chip pink accent-1'>").text("Rating: " + rating);
-
-
-                var abstractImage = $("<img>", {
-                    'src': still,
-                    'data-still': still,
-                    'data-animate': animation,
-                    'data-state': "still",
-                    'class': "abstract-image"
-
-                });
-
-                abstractDiv.append(p);
-                abstractDiv.append(abstractImage);
-
-                $(".gifGuts").append(abstractDiv);
-                
+            method: "GET",
+            headers:{
+                "X-Mashape-Key": "LRVp30TNDXmsh6Qjeevv3raWCHJVp1pSl8cjsn9AoUPUBQz53X",
+                "Accept": "application/json"
+            },
+            dataType: "json",
+            success: function(data){
+                console.log("success: "+ data);
             }
+        })
+        .then(function(response) {
+            console.log(response);
+            
         });
-});
-
-$(document).on("click", ".abstract-image", function() {
-    var state = $(this).attr("data-state");
-
-    if (state === "still") {
-        $(this).attr("src", $(this).attr("data-animate"));
-        $(this).attr("data-state", "animate");
-    } else {
-        $(this).attr("src", $(this).attr("data-still"));
-        $(this).attr("data-state", "still");
-    }
-
-
 });
 
 $("#sendGet").on("click", function(event) {
