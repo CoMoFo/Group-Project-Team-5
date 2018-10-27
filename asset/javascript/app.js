@@ -110,29 +110,38 @@ $(document).on("click", "#submitSearch", function(e){
 });
 
 $(document).on("click", ".abstract", function() {
-    $(".gifs").empty();
-    var foodPlace = $(this).attr("data-value").trim();
-    console.log(foodPlace);
+    // $(".gifs").empty();
+    // var foodPlace = $(this).attr("data-value").trim();
+    // console.log(foodPlace);
 
-    var queryURL = "https://nutritionix-api.p.mashape.com/v1_1/search/"+foodPlace;
-    console.log(queryURL);
+    // var queryURL = "https://nutritionix-api.p.mashape.com/v1_1/search/"+foodPlace;
+    // console.log(queryURL);
 
-    $.ajax({
-            url: queryURL,
-            method: "GET",
-            headers:{
-                "X-Mashape-Key": "LRVp30TNDXmsh6Qjeevv3raWCHJVp1pSl8cjsn9AoUPUBQz53X",
-                "Accept": "application/json"
-            },
-            dataType: "json",
-            success: function(data){
-                console.log("success: "+ data);
-            }
-        })
-        .then(function(response) {
-            console.log(response);
+    // $.ajax({
+    //         url: queryURL,
+    //         method: "GET",
+    //         headers:{
+    //             "X-Mashape-Key": "LRVp30TNDXmsh6Qjeevv3raWCHJVp1pSl8cjsn9AoUPUBQz53X",
+    //             "Accept": "application/json"
+    //         },
+    //         dataType: "json",
+    //         success: function(data){
+    //             console.log("success: "+ data);
+    //         }
+    //     })
+    //     .then(function(response) {
+    //         console.log(response);
             
-        });
+    //     });
+
+    var uberURL = "https://sandbox-api.uber.com/v1.2/products?server_token=Hrad593eWCUzLo8y-EBJNke44sNV2hY-SI4CsbEK&latitude=40.730610&longitude=-73.935242";
+    $.ajax({
+        url: uberURL,
+        method: "GET"
+    }).then(function(uberResponse){
+        console.log(uberResponse);
+    })
+    
 });
 
 $("#sendGet").on("click", function(event) {
