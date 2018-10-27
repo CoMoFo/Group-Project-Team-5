@@ -37,7 +37,7 @@ var gifMachine = {
         $('#buttonGroup').empty();
         for (i = 0; i < this.topics.length; i++) {
             var bttn = $('<button />', {
-                "class": 'abstract btn waves-effect',
+                "class": 'abstract btn waves-effect blue',
                 "data-value": this.topics[i].replace(" ", "+"),
                 text: this.topics[i]
             });
