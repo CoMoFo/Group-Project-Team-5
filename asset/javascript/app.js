@@ -1,15 +1,3 @@
-$(".navbar-toggler").on("click", function(){
-
-    console.log($("#navbarToggleExternalContent").css("display"));
-    
-    if($("#navbarToggleExternalContent").css("display") === "none"){
-        $("#navbarToggleExternalContent").css("display", "unset");
-    }
-    else if($("#navbarToggleExternalContent").css("display") === "unset") {
-        $("#navbarToggleExternalContent").css("display", "none");
-    }
-})
-
 var map;
 var infowindow;
 
@@ -54,14 +42,10 @@ function createMarker(place) {
 var gifMachine = {
     topics: ['mcdonalds',
         'burger king',
-        'in-and-out burger',
         'wendys',
-        'yoshinoya',
         'arbys',
         'olive garden',
-        'china chef',
         'papa johns',
-        'outback'
     ],
 
     buttonGenerator: function() {
@@ -92,8 +76,6 @@ $(document).on("click", "#submitSearch", function(e){
 
     var city = $("#city").val();
     console.log(city);
-
-    var userKey = "23c62f98e8626382f65fe3b8fb2ba93f";
 
     var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
     console.log(query);
