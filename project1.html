@@ -40,7 +40,7 @@
             <div id="header">
                <form>
                  <div class ="form-box">
-                     <h1>Find <span>Your<span> Favorite</span>Foods!</span></h1>
+                     <h1>Find <span>Your<span> Favorite</span> Foods!</span></h1>
                <div id="searchDiv">
                      <input class="search-field skills" name="search" type="text"
                  placeholder="Skills,Keywords..."/>
@@ -88,8 +88,12 @@
 
         $(document).on("click", ".search-btn", function(){
             $(".imgDiv").css("display", "none");
+            
             $("#header").css("top", 0);
+            $(".menu-display").css("display", "block")
         })
+
+
 </script>
         
           
@@ -127,17 +131,23 @@
             setTimeout(carousel,2000);// change image every 2 seconds
             }
           
+         </script>
           
           
-          
-          
-          
-          
-          
-          </script>
-          
-    </body>
-     
+          <div class="menu-display">place holder text</div>
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        </body>
+     </html>
       
      
       
