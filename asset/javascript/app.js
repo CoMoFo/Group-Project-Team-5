@@ -11,10 +11,43 @@ $(".navbar-toggler").on("click", function(){
 })
 
 var map;
+var infowindow;
+
 function initMap() {
+  var pyrmont = {lat: 40.7309, lng: -74.065};
+
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.730610, lng: -73.935242},
-    zoom: 8
+    center: pyrmont,
+    zoom: 15
+  });
+
+  infowindow = new google.maps.InfoWindow();
+  var service = new google.maps.places.PlacesService(map);
+  service.nearbySearch({
+    location: pyrmont,
+    radius: 16094,
+    name: ["McDonald"]
+  }, callback);
+}
+
+function callback(results, status) {
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      createMarker(results[i]);
+    }
+  }
+}
+
+function createMarker(place) {
+  var placeLoc = place.geometry.location;
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
   });
 }
 
@@ -110,6 +143,30 @@ $(document).on("click", "#submitSearch", function(e){
 });
 
 $(document).on("click", ".abstract", function() {
+
+     initMap();
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.7309, lng: -74.065},
+          zoom: 15
+        });
+       
+
+        //HTML5 geolocation.
+        if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+            // This defines the local storage variables 
+            localStorage.setItem("userLat", position.coords.latitude);
+            localStorage.setItem("userLong", position.coords.longitude);
+            
+            // These are the variables we will use for Latitude and Longitude.
+            console.log("This is user Latitude", localStorage.getItem("userLat"))
+            console.log("This is user Longitude", localStorage.getItem("userLong"))}
+        )}};
+
+    
     // $(".gifs").empty();
     // var foodPlace = $(this).attr("data-value").trim();
     // console.log(foodPlace);
@@ -134,13 +191,13 @@ $(document).on("click", ".abstract", function() {
             
     //     });
 
-    var uberURL = "https://sandbox-api.uber.com/v1.2/products?server_token=Hrad593eWCUzLo8y-EBJNke44sNV2hY-SI4CsbEK&latitude=40.730610&longitude=-73.935242";
-    $.ajax({
-        url: uberURL,
-        method: "GET"
-    }).then(function(uberResponse){
-        console.log(uberResponse);
-    })
+    // var uberURL = "https://sandbox-api.uber.com/v1.2/products?server_token=Hrad593eWCUzLo8y-EBJNke44sNV2hY-SI4CsbEK&latitude=40.730610&longitude=-73.935242";
+    // $.ajax({
+    //     url: uberURL,
+    //     method: "GET"
+    // }).then(function(uberResponse){
+    //     console.log(uberResponse);
+    // })
     
 });
 
