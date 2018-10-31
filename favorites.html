@@ -8,8 +8,11 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- Link to reset CSS file -->
         <link rel="stylesheet" type="text/css" href="asset/css/reset.css">
+        <link rel="stylesheet" href="asset/css/style.css">
         <link rel="stylesheet" href="asset/css/project1.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script> -->
         <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
         <title>Favorite Food</title>
     </head>
@@ -64,11 +67,8 @@
                         <div class="input-field col s8">
                             <!-- <i class="material-icons prefix">http</i> -->
                             <i class="material-icons prefix"></i>
-                            <input value="Click one of the tabs or Type a restaurant name here and click Submit" id="icon_prefix2" class="first_name2">
-                                
-                            </textarea>
-                                
-                            <label for="icon_prefix2"></label>
+                            <input placeholder="Click one of the tabs or Type a restaurant name here and click Submit" id="addRestaurant" class="first_name2">                                
+                            <!-- <label for="icon_prefix2"></label> -->
                         </div>
                     </div>
                 </form>
@@ -83,6 +83,17 @@
             </div>
             <div id="map"></div>
         </div>
+
+        <script>
+            var map;
+            function initMap() {
+              map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 40.7128, lng: -74.0060},
+                zoom: 8
+              });
+            }
+        </script>
+
         <script src='asset/javascript/app.js'></script>
         <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOBVpgk242X7hYUW0wFVhJaKFWgcImyjA&libraries=places"></script> -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOBVpgk242X7hYUW0wFVhJaKFWgcImyjA&libraries=places&callback=initMap"
