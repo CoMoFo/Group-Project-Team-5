@@ -58,7 +58,8 @@ var restaurantButton = {
         $(".menu-display").empty();
 
         var city = $("#location").val();
-        console.log(city);
+        var currentLat = localStorage.getItem("userLat");
+        var currentLong = localStorage.getItem("userLong");
 
         var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
         console.log(query);
@@ -66,23 +67,36 @@ var restaurantButton = {
         $.ajax({
             url: query,
             method: "GET"
-        }).then(function(response){
-            console.log(response);
-            var entityID;
-            var entityType;
-            for(var i=0; i<response.location_suggestions.length; i++){
-                console.log(response.location_suggestions);
-                // console.log(response.location_suggestions[0].city_id);
-                entityID = response.location_suggestions[0].entity_id;
-                entityType = response.location_suggestions[0].entity_type;
-            }
-            console.log("ID: "+entityID);
-            console.log("Type: "+entityType);
+        }).then(function(result){
+            console.log(result);
+
+            var searchCity;
+            var searchLat;
+            var searchLong;
+
+            searchCity = result.location_suggestions[0].city_name;
+            searchLat = result.location_suggestions[0].latitude;
+            searchLong = result.location_suggestions[0].longitude;
+
+            console.log(searchCity);
+            console.log(searchLat);
+            console.log(searchLong);
+
+            // var entityID;
+            // // var entityType;
+            // for(var i=0; i<result.location_suggestions.length; i++){
+            //     console.log(result.location_suggestions);
+            //     // console.log(result.location_suggestions[0].city_id);
+            //     entityID = result.location_suggestions[0].entity_id;
+            //     entityType = result.location_suggestions[0].entity_type;
+            //  }
+            // console.log("ID: "+entityID);
+            // console.log("Type: "+entityType);
             
-            var entity = "entity_id="+entityID;
-            var entityTy = "&entity_type="+entityType;
+            // var entity = "entity_id="+entityID;
+            // var entityTy = "&entity_type="+entityType;
             
-            var queryDetail = "https://developers.zomato.com/api/v2.1/location_details?apikey=23c62f98e8626382f65fe3b8fb2ba93f&"+entity+entityTy;
+            var queryDetail = "https://developers.zomato.com/api/v2.1/geocode?apikey=23c62f98e8626382f65fe3b8fb2ba93f"+"&lat="+searchLat+"&lon="+searchLong;
             console.log(queryDetail);
 
             $.ajax({
@@ -90,17 +104,27 @@ var restaurantButton = {
                 method: "GET"
             }).then(function(result){
                 console.log(result);
-                for(var j=0; j<result.best_rated_restaurant.length; j++){
-                    console.log(result.best_rated_restaurant[j]);
+                for(var j=0; j<result.nearby_restaurants.length; j++){
+                    console.log(result.nearby_restaurants[j]);
 
                     var itemDiv = $("<div class= card search-snippet-card search-card>");
                     
-                    var itemCont = itemDiv.html("<div class= content>");
-
-                    var restName = itemCont.html("<h1 class=restName>")
-
-                    restName.append(result.best_rated_restaurant[j].restaurant.name);
-
+                    var itemCont = $("<div class= content>");
+                    
+                    var restName = $("<h1 class=restName>");
+                    restName.text(result.nearby_restaurants[j].restaurant.name);
+                    itemCont.append(restName);
+                    
+                    var restAddress = $("<h2 class = restAddress>");
+                    restAddress.prepend(result.nearby_restaurants[j].restaurant.location.address);
+                    itemCont.append(restAddress);
+                    
+                    var url = result.nearby_restaurants[j].restaurant.menu_url;
+                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                    itemCont.append(restUrl);
+                    // restUrl.append(result.nearby_restaurants[j].restaurant.menu_url);
+                    
+                    itemDiv.append(itemCont);
                     $(".menu-display").append(itemDiv);
                 }
             });
