@@ -1,142 +1,203 @@
-var gifMachine = {
-    topics: ['mcdonalds',
-        'burger king',
-        'in-and-out burger',
-        'wendys',
-        'yoshinoya',
-        'arbys',
-        'olive garden',
-        'china chef',
-        'papa johns',
-        'outback'
-    ],
+//****************************************************//
+//****************************************************//
 
-    giphyJax: function() {
+//*************** Google GeoLocation API which ask user to know the current latitude and longitude *************//
 
-    },
+function initMapCord(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
 
-    weatherJax: function() {
-        var query_param1 = "Santa Monica";
-        var appID2 = "ad2a32bbb65b8db270ee6f7c72514b20";
-        var queryURL2 = "http://api.openweathermap.org/data/2.5/weather?q=" + query_param1 + "&APPID=" + appID2;
-        console.log(this.topics[3]);
-        
+            // This defines the local storage variables 
+            localStorage.setItem("userLat", position.coords.latitude);
+            localStorage.setItem("userLong", position.coords.longitude);
+            
+            // These are the variables we will use for Latitude and Longitude.
+            console.log("This is user Latitude", localStorage.getItem("userLat"))
+            console.log("This is user Longitude", localStorage.getItem("userLong"))
+          }
+        )}
+}
 
-        $.ajax({
-            url: queryURL2,
-            method: 'GET'
-        }).done(function(response) {
-            console.log("Weather");
-            console.log(response);
-        });
-
-
-    },
-
-    buttonGenerator: function() {
-        $('#buttonGroup').empty();
-        for (i = 0; i < this.topics.length; i++) {
-            var bttn = $('<button />', {
-                "class": 'abstract btn waves-effect',
-                "data-value": this.topics[i].replace(" ", "+"),
-                text: this.topics[i]
-            });
-            $('#buttonGroup').append(bttn);
-
-        }
-    }
-
-
-};
-
-
-
-gifMachine.buttonGenerator();
-
+//****************** Code is run from here once the document is ready and loaded ******************//
 
 $(document).ready(function() {
-    Materialize.updateTextFields();
-    gifMachine.buttonGenerator();
 
-});
+//********************** Object to hold the favorite restaurant or food chains ******************************//
+var restaurantButton = {
+    topics: ['mcdonalds',
+            'burger king',
+            'wendys',
+            'arbys',
+            'olive garden',
+            'papa johns',
+        ],
 
-
-
-
-
-$(document).on("click", ".abstract", function() {
-    $(".gifGuts").empty();
-    $(".abstract").removeClass("active");
-
-    $(this).addClass("active");
-
-    var appID = "dc6zaTOxFJmzC" + "&limit=10"; // public
-
-    var query_param = $(this).attr("data-value");
-
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + query_param + "&api_key=" + appID;
-    $(".abstract").removeClass("active");
-
-
-    $.ajax({
-            url: queryURL,
-            method: "GET"
-        })
-        .done(function(response) {
-            var returns = response.data;
-
-
-
-            for (var i = 0; i < returns.length; i++) {
-                var abstractDiv = $("<div class=\"abstract-item col s6 m4 l2\">");
-
-                var rating = returns[i].rating;
-
-
-                var animation = returns[i].images.fixed_height.url;
-                var still = returns[i].images.fixed_height_still.url;
-                var p = $("<div class='chip pink accent-1'>").text("Rating: " + rating);
-
-
-                var abstractImage = $("<img>", {
-                    'src': still,
-                    'data-still': still,
-                    'data-animate': animation,
-                    'data-state': "still",
-                    'class': "abstract-image"
-
+        buttonGenerator: function() {
+            $('#buttonGroup').empty();
+            for (i = 0; i < this.topics.length; i++) {
+                var bttn = $('<button />', {
+                    "class": 'abstract btn waves-effect',
+                    "data-value": this.topics[i],
+                    text: this.topics[i]
                 });
-
-                abstractDiv.append(p);
-                abstractDiv.append(abstractImage);
-
-                $(".gifGuts").append(abstractDiv);
+                $('#buttonGroup').append(bttn);
                 
             }
+        }
+    };
+    
+    restaurantButton.buttonGenerator();
+    
+    localStorage.setItem("restaurants", restaurantButton.topics);
+
+    //********* On click of submit Ajax call to Zomato API to get restaurant details *************//
+
+    $(document).on("click", "#submitSearch", function(e){
+        e.preventDefault();
+
+        $(".menu-display").empty();
+
+        var city = $("#location").val();
+        var currentLat = localStorage.getItem("userLat");
+        var currentLong = localStorage.getItem("userLong");
+
+        var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
+        console.log(query);
+
+        $.ajax({
+            url: query,
+            method: "GET"
+        }).then(function(result){
+            console.log(result);
+
+            var searchCity;
+            var searchLat;
+            var searchLong;
+
+            searchCity = result.location_suggestions[0].city_name;
+            searchLat = result.location_suggestions[0].latitude;
+            searchLong = result.location_suggestions[0].longitude;
+
+            console.log(searchCity);
+            console.log(searchLat);
+            console.log(searchLong);
+
+            // var entityID;
+            // // var entityType;
+            // for(var i=0; i<result.location_suggestions.length; i++){
+            //     console.log(result.location_suggestions);
+            //     // console.log(result.location_suggestions[0].city_id);
+            //     entityID = result.location_suggestions[0].entity_id;
+            //     entityType = result.location_suggestions[0].entity_type;
+            //  }
+            // console.log("ID: "+entityID);
+            // console.log("Type: "+entityType);
+            
+            // var entity = "entity_id="+entityID;
+            // var entityTy = "&entity_type="+entityType;
+            
+            var queryDetail = "https://developers.zomato.com/api/v2.1/geocode?apikey=23c62f98e8626382f65fe3b8fb2ba93f"+"&lat="+searchLat+"&lon="+searchLong;
+            console.log(queryDetail);
+
+            $.ajax({
+                url: queryDetail,
+                method: "GET"
+            }).then(function(result){
+                console.log(result);
+                for(var j=0; j<result.nearby_restaurants.length; j++){
+                    console.log(result.nearby_restaurants[j]);
+
+                    var itemDiv = $("<div class= card search-snippet-card search-card>");
+                    
+                    var itemCont = $("<div class= content>");
+                    
+                    var restName = $("<h1 class=restName>");
+                    restName.text(result.nearby_restaurants[j].restaurant.name);
+                    itemCont.append(restName);
+                    
+                    var restAddress = $("<h2 class = restAddress>");
+                    restAddress.prepend(result.nearby_restaurants[j].restaurant.location.address);
+                    itemCont.append(restAddress);
+                    
+                    var url = result.nearby_restaurants[j].restaurant.menu_url;
+                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                    itemCont.append(restUrl);
+                    // restUrl.append(result.nearby_restaurants[j].restaurant.menu_url);
+                    
+                    itemDiv.append(itemCont);
+                    $(".menu-display").append(itemDiv);
+                }
+            });
         });
-});
+    });
 
-$(document).on("click", ".abstract-image", function() {
-    var state = $(this).attr("data-state");
+    //************* On click function of buttons on my Favorite page ******************//
+    $(document).on("click", ".abstract", function() {
 
-    if (state === "still") {
-        $(this).attr("src", $(this).attr("data-animate"));
-        $(this).attr("data-state", "animate");
-    } else {
-        $(this).attr("src", $(this).attr("data-still"));
-        $(this).attr("data-state", "still");
-    }
+        var favRestaurant = $(this).attr("data-value");
+        console.log("my fav place: "+favRestaurant);
 
+        //************** Googl GeoLocation API to display specfic places in 10 miles radius of current location ***********/
+        var map;
+        var infowindow;
 
-});
+        initMap();
 
-$("#sendGet").on("click", function(event) {
-    event.preventDefault();
-    var newTopic = $("#icon_prefix2").eq(0).val();
+        function initMap() {
+            
+            lat = localStorage.getItem("userLat");
+            long = localStorage.getItem("userLong");
+            var currentLocation = new google.maps.LatLng(lat, long);
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: currentLocation,
+                zoom: 12
+            });
 
-    if (newTopic.length > 2) {
-        gifMachine.topics.push(newTopic);
-        $("#icon_prefix2").val('');
-        gifMachine.buttonGenerator();
-    }
+            
+            console.log("my fav place: "+favRestaurant);
+            infowindow = new google.maps.InfoWindow();
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch({
+                location: currentLocation,
+                radius: 16094,
+                name: [favRestaurant]
+            }, callback);
+        };
+
+        function callback(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                    createMarker(results[i]);
+                }
+            }
+        }
+        
+        function createMarker(place) {
+            var placeLoc = place.geometry.location;
+            var marker = new google.maps.Marker({
+                map: map,
+                position: place.geometry.location
+            });
+            
+            google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent(place.name);
+                infowindow.open(map, this);
+            });
+        }
+        
+    });
+
+    $("#sendGet").on("click", function(event) {
+        // event.preventDefault();
+        var newTopic = $("#addRestaurant").val().trim();
+        console.log(newTopic);
+
+        if (newTopic.length > 2) {
+            restaurantButton.topics.push(newTopic);
+            $("#addRestaurant").val('');
+            restaurantButton.buttonGenerator();
+        }
+    });
+
 });
