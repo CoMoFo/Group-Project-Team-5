@@ -140,3 +140,18 @@ $("#sendGet").on("click", function(event) {
         gifMachine.buttonGenerator();
     }
 });
+   
+$("button-fav").on("click", function(event) {
+    event.preventDefault();
+    var newTopic = $("button").eq(0).val();
+
+    if (newTopic.length > 2) {
+        gifMachine.topics.push(newTopic);
+        $("sendGet2").val('');
+        removeClass.buttonGenerator();
+    }
+
+
+
+ 
+ 
