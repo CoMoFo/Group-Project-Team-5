@@ -53,7 +53,7 @@ span{
 }
 
 .form-box{
-    background:rgba(131, 125, 125, 0.5);
+    background:#094c7e;
     padding:30px 50px;
     margin-left: 15px;
     margin-right: 15px;
@@ -62,7 +62,7 @@ span{
 }
 
 .menu-display{
-    background:rgba(131, 125, 125, 0.5);
+    background:#094c7e;
     padding:30px 50px;
     margin-left: 15px;
     margin-right: 15px;
@@ -73,12 +73,12 @@ span{
 }
 
 #header{
-    position: relative;
+    position:relative;
     top: -200px;
 }
 
 .navbar{
-    color:#094c7e;
+    color:#fff; 
 }
 
 .container{
@@ -116,4 +116,16 @@ span{
 
 .topRow{
     color: white;
+}
+.card{
+    color:rgba(4, 185, 4, 0.616)
+}
+.restName{
+    color:rgba(4, 185, 4, 0.616)
+}
+.content{
+    color:darkturquoise;
+}
+.restAddress{
+    color:purple
 }
