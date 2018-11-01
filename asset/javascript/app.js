@@ -41,6 +41,11 @@ var restaurantButton = {
                     text: this.topics[i]
                 });
                 $('#buttonGroup').append(bttn);
+
+                // localStorage.setItem("restaurants", $("#buttonGroup"));
+                // for(var k=0; k<$("#buttonGroup").length; )
+                // console.log($("#buttonGroup"))
+                localStorage.setItem("restaurants", restaurantButton.topics);
                 
             }
         }
@@ -77,24 +82,6 @@ var restaurantButton = {
             searchCity = result.location_suggestions[0].city_name;
             searchLat = result.location_suggestions[0].latitude;
             searchLong = result.location_suggestions[0].longitude;
-
-            console.log(searchCity);
-            console.log(searchLat);
-            console.log(searchLong);
-
-            // var entityID;
-            // // var entityType;
-            // for(var i=0; i<result.location_suggestions.length; i++){
-            //     console.log(result.location_suggestions);
-            //     // console.log(result.location_suggestions[0].city_id);
-            //     entityID = result.location_suggestions[0].entity_id;
-            //     entityType = result.location_suggestions[0].entity_type;
-            //  }
-            // console.log("ID: "+entityID);
-            // console.log("Type: "+entityType);
-            
-            // var entity = "entity_id="+entityID;
-            // var entityTy = "&entity_type="+entityType;
             
             var queryDetail = "https://developers.zomato.com/api/v2.1/geocode?apikey=23c62f98e8626382f65fe3b8fb2ba93f"+"&lat="+searchLat+"&lon="+searchLong;
             console.log(queryDetail);
@@ -122,7 +109,9 @@ var restaurantButton = {
                     var url = result.nearby_restaurants[j].restaurant.menu_url;
                     var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
                     itemCont.append(restUrl);
-                    // restUrl.append(result.nearby_restaurants[j].restaurant.menu_url);
+
+                    var addFavRest = $("<button id=addFav class=btn btn-outline-success><h4>Add to My Favorites</h4></button>")
+                    itemCont.append(addFavRest);
                     
                     itemDiv.append(itemCont);
                     $(".menu-display").append(itemDiv);
@@ -131,6 +120,17 @@ var restaurantButton = {
         });
     });
 
+    // $(document).on("click", "#addFav", function(){
+    //     console.log($(".restName"));
+    //     // var newTopic = $("#addRestaurant").val().trim();
+    //     // console.log(newTopic);
+
+    //     // if (newTopic.length > 0) {
+    //     //     restaurantButton.topics.push(newTopic);
+    //     //     $("#addRestaurant").val('');
+    //     //     restaurantButton.buttonGenerator();
+    //     // }
+    // })
     //************* On click function of buttons on my Favorite page ******************//
     $(document).on("click", ".abstract", function() {
 
@@ -189,15 +189,29 @@ var restaurantButton = {
     });
 
     $("#sendGet").on("click", function(event) {
-        // event.preventDefault();
+        event.preventDefault();
         var newTopic = $("#addRestaurant").val().trim();
         console.log(newTopic);
 
-        if (newTopic.length > 2) {
+        if (newTopic.length > 0) {
             restaurantButton.topics.push(newTopic);
             $("#addRestaurant").val('');
             restaurantButton.buttonGenerator();
         }
+    });
+
+    $("#deleteBtn").on("click", function(event) {
+        // event.preventDefault();
+        var deleteTopic = $("#addRestaurant").val().trim();
+        console.log(deleteTopic);
+
+        for(var i=0; i<restaurantButton.topics.length; i++){
+            if(deleteTopic == restaurantButton.topics[i]){
+                console.log(restaurantButton.topics);
+                restaurantButton.topics.splice(i,1);
+            }
+        }
+        restaurantButton.buttonGenerator();
     });
 
 });
