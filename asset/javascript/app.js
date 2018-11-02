@@ -5,98 +5,17 @@
 
 function initMapCord(){
     if (navigator.geolocation) {
-<<<<<<< HEAD
-        navigator.geolocation.getCurrentPosition(function(position) {
-
-            // This defines the local storage variables 
-            localStorage.setItem("userLat", position.coords.latitude);
-            localStorage.setItem("userLong", position.coords.longitude);
-            
-            // These are the variables we will use for Latitude and Longitude.
-            console.log("This is user Latitude", localStorage.getItem("userLat"))
-            console.log("This is user Longitude", localStorage.getItem("userLong"))
-          }
-        )}
-=======
         navigator.geolocation.getCurrentPosition(function(position){
             // This defines the local storage variables 
             localStorage.setItem("userLat", position.coords.latitude);
             localStorage.setItem("userLong", position.coords.longitude);
         });
     }
->>>>>>> Vinit
 }
 
 //****************** Code is run from here once the document is ready and loaded ******************//
 
 $(document).ready(function() {
-<<<<<<< HEAD
-
-//********************** Object to hold the favorite restaurant or food chains ******************************//
-var restaurantButton = {
-    topics: ['mcdonalds',
-            'burger king',
-            'wendys',
-            'arbys',
-            'olive garden',
-            'papa johns',
-        ],
-
-        buttonGenerator: function() {
-            $('#buttonGroup').empty();
-            for (i = 0; i < this.topics.length; i++) {
-                var bttn = $('<button />', {
-                    "class": 'abstract btn waves-effect',
-                    "data-value": this.topics[i],
-                    text: this.topics[i]
-                });
-                $('#buttonGroup').append(bttn);
-
-                // localStorage.setItem("restaurants", $("#buttonGroup"));
-                // for(var k=0; k<$("#buttonGroup").length; )
-                // console.log($("#buttonGroup"))
-                localStorage.setItem("restaurants", restaurantButton.topics);
-                
-            }
-        }
-    };
-    
-    restaurantButton.buttonGenerator();
-    
-    localStorage.setItem("restaurants", restaurantButton.topics);
-
-    //********* On click of submit Ajax call to Zomato API to get restaurant details *************//
-
-    $(document).on("click", "#submitSearch", function(e){
-        e.preventDefault();
-
-        $(".menu-display").empty();
-
-        var city = $("#location").val();
-        var currentLat = localStorage.getItem("userLat");
-        var currentLong = localStorage.getItem("userLong");
-
-        var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
-        console.log(query);
-
-        $.ajax({
-            url: query,
-            method: "GET"
-        }).then(function(result){
-            console.log(result);
-
-            var searchCity;
-            var searchLat;
-            var searchLong;
-
-            searchCity = result.location_suggestions[0].city_name;
-            searchLat = result.location_suggestions[0].latitude;
-            searchLong = result.location_suggestions[0].longitude;
-            
-            var queryDetail = "https://developers.zomato.com/api/v2.1/geocode?apikey=23c62f98e8626382f65fe3b8fb2ba93f"+"&lat="+searchLat+"&lon="+searchLong;
-            console.log(queryDetail);
-
-=======
 
 //********************** Object to hold the favorite restaurant or food chains ******************************//
     var restaurantButton = {
@@ -156,40 +75,19 @@ var restaurantButton = {
             var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+currentLat+"&lon="+currentLong;
             console.log(queryDetail);
     
->>>>>>> Vinit
             $.ajax({
                 url: queryDetail,
                 method: "GET"
             }).then(function(result){
                 console.log(result);
-<<<<<<< HEAD
-                for(var j=0; j<result.nearby_restaurants.length; j++){
-                    console.log(result.nearby_restaurants[j]);
-
-=======
                 for(var j=0; j<result.restaurants.length; j++){
                     console.log(result.restaurants[j]);
         
->>>>>>> Vinit
                     var itemDiv = $("<div class= card search-snippet-card search-card>");
                     
                     var itemCont = $("<div class= content>");
                     
                     var restName = $("<h1 class=restName>");
-<<<<<<< HEAD
-                    restName.text(result.nearby_restaurants[j].restaurant.name);
-                    itemCont.append(restName);
-                    
-                    var restAddress = $("<h2 class = restAddress>");
-                    restAddress.prepend(result.nearby_restaurants[j].restaurant.location.address);
-                    itemCont.append(restAddress);
-                    
-                    var url = result.nearby_restaurants[j].restaurant.menu_url;
-                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
-                    itemCont.append(restUrl);
-
-                    var addFavRest = $("<button id=addFav class=btn btn-outline-success><h4>Add to My Favorites</h4></button>")
-=======
                     restName.text(result.restaurants[j].restaurant.name);
                     itemCont.append(restName);
                     
@@ -202,30 +100,12 @@ var restaurantButton = {
                     itemCont.append(restUrl);
         
                     var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+result.restaurants[j].restaurant.name+"><h4>Add to My Favorites</h4></button>")
->>>>>>> Vinit
                     itemCont.append(addFavRest);
                     
                     itemDiv.append(itemCont);
                     $(".menu-display").append(itemDiv);
                 }
             });
-<<<<<<< HEAD
-        });
-    });
-
-    // $(document).on("click", "#addFav", function(){
-    //     console.log($(".restName"));
-    //     // var newTopic = $("#addRestaurant").val().trim();
-    //     // console.log(newTopic);
-
-    //     // if (newTopic.length > 0) {
-    //     //     restaurantButton.topics.push(newTopic);
-    //     //     $("#addRestaurant").val('');
-    //     //     restaurantButton.buttonGenerator();
-    //     // }
-    // })
-    //************* On click function of buttons on my Favorite page ******************//
-=======
         
         }
 
@@ -301,7 +181,6 @@ var restaurantButton = {
     })
 
     //************* On click function for favorite restaurant buttons on my Favorite page ******************//
->>>>>>> Vinit
     $(document).on("click", ".abstract", function() {
 
         var favRestaurant = $(this).attr("data-value");
@@ -323,10 +202,6 @@ var restaurantButton = {
                 center: currentLocation,
                 zoom: 12
             });
-<<<<<<< HEAD
-
-=======
->>>>>>> Vinit
             
             console.log("my fav place: "+favRestaurant);
             infowindow = new google.maps.InfoWindow();
@@ -347,20 +222,13 @@ var restaurantButton = {
         }
         
         function createMarker(place) {
-<<<<<<< HEAD
-            var placeLoc = place.geometry.location;
-=======
             // var placeLoc = place.geometry.location;
->>>>>>> Vinit
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location
             });
             
             google.maps.event.addListener(marker, 'click', function() {
-<<<<<<< HEAD
-                infowindow.setContent(place.name);
-=======
                 var service = new google.maps.places.PlacesService(map);
                 
                 service.getDetails({
@@ -375,39 +243,12 @@ var restaurantButton = {
                 })
 
                 infowindow.setContent("<div><strong>"+place.name+"</strong><br>"+place.formatted_address+"</div>");
->>>>>>> Vinit
                 infowindow.open(map, this);
             });
         }
         
     });
 
-<<<<<<< HEAD
-    $("#sendGet").on("click", function(event) {
-        event.preventDefault();
-        var newTopic = $("#addRestaurant").val().trim();
-        console.log(newTopic);
-
-        if (newTopic.length > 0) {
-            restaurantButton.topics.push(newTopic);
-            $("#addRestaurant").val('');
-            restaurantButton.buttonGenerator();
-        }
-    });
-
-    $("#deleteBtn").on("click", function(event) {
-        // event.preventDefault();
-        var deleteTopic = $("#addRestaurant").val().trim();
-        console.log(deleteTopic);
-
-        for(var i=0; i<restaurantButton.topics.length; i++){
-            if(deleteTopic == restaurantButton.topics[i]){
-                console.log(restaurantButton.topics);
-                restaurantButton.topics.splice(i,1);
-            }
-        }
-        restaurantButton.buttonGenerator();
-=======
     //********** Adds the typed restaurant name to My Favorites List ***************/
     $("#sendGet").on("click", function(event) {
         event.preventDefault();
@@ -441,7 +282,6 @@ var restaurantButton = {
                 }
             }
         }
->>>>>>> Vinit
     });
 
 });
