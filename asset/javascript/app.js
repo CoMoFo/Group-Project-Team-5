@@ -5,17 +5,12 @@
 
 function initMapCord(){
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-
+        navigator.geolocation.getCurrentPosition(function(position){
             // This defines the local storage variables 
             localStorage.setItem("userLat", position.coords.latitude);
             localStorage.setItem("userLong", position.coords.longitude);
-            
-            // These are the variables we will use for Latitude and Longitude.
-            // console.log("This is user Latitude", localStorage.getItem("userLat"))
-            // console.log("This is user Longitude", localStorage.getItem("userLong"))
-          }
-        )}
+        });
+    }
 }
 
 //****************** Code is run from here once the document is ready and loaded ******************//
@@ -45,7 +40,8 @@ $(document).ready(function() {
         }
     };
     restaurantButton.buttonGenerator();
-        
+    
+    //****************** Stores the my favorite buttons to local storage *******************//
     saveToLocalStorage();
     function saveToLocalStorage(){
         if(localStorage.getItem("favRest")){
@@ -54,7 +50,7 @@ $(document).ready(function() {
             restaurantButton.buttonGenerator();
         }
         else{
-            localStorage.setItem("favRest", restaurantButton.topics)
+            localStorage.setItem("favRest", restaurantButton.topics);
         }        
     }
     
@@ -67,67 +63,54 @@ $(document).ready(function() {
         if($("#searchByName").val() && $("#location").val()){
             console.log("specific restaurant in a specfic city");
         }
+        //******** API call which searches for restaurant based on the city entered ********//
         else if($("#location").val()){
 
             console.log("Restaurant by city");
 
             var city = $("#location").val();
             var currentLat = localStorage.getItem("userLat");
-            var currentLong = localStorage.getItem("userLong");
-    
-            var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
-            console.log(query);
+            var currentLong = localStorage.getItem("userLong");            
+                
+            var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+currentLat+"&lon="+currentLong;
+            console.log(queryDetail);
     
             $.ajax({
-                url: query,
+                url: queryDetail,
                 method: "GET"
             }).then(function(result){
                 console.log(result);
-    
-                var searchCity;
-                var searchLat;
-                var searchLong;
-    
-                searchCity = result.location_suggestions[0].city_name;
-                searchLat = result.location_suggestions[0].latitude;
-                searchLong = result.location_suggestions[0].longitude;
-                
-                var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+searchLat+"&lon="+searchLong;
-                console.log(queryDetail);
-    
-                $.ajax({
-                    url: queryDetail,
-                    method: "GET"
-                }).then(function(result){
-                    console.log(result);
-                    for(var j=0; j<result.restaurants.length; j++){
-                        console.log(result.restaurants[j]);
-
-                        var itemDiv = $("<div class= card search-snippet-card search-card>");
-                        
-                        var itemCont = $("<div class= content>");
-                        
-                        var restName = $("<h1 class=restName>");
-                        restName.text(result.restaurants[j].restaurant.name);
-                        itemCont.append(restName);
-                        
-                        var restAddress = $("<h2 class = restAddress>");
-                        restAddress.text(result.restaurants[j].restaurant.location.address);
-                        itemCont.append(restAddress);
-                        
-                        var url = result.restaurants[j].restaurant.menu_url;
-                        var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
-                        itemCont.append(restUrl);
-    
-                        var addFavRest = $("<button id=addFav class=btn btn-outline-success value="+(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
-                        itemCont.append(addFavRest);
-                        
-                        itemDiv.append(itemCont);
-                        $(".menu-display").append(itemDiv);
-                    }
-                });
+                for(var j=0; j<result.restaurants.length; j++){
+                    console.log(result.restaurants[j]);
+        
+                    var itemDiv = $("<div class= card search-snippet-card search-card>");
+                    
+                    var itemCont = $("<div class= content>");
+                    
+                    var restName = $("<h1 class=restName>");
+                    restName.text(result.restaurants[j].restaurant.name);
+                    itemCont.append(restName);
+                    
+                    var restAddress = $("<h2 class = restAddress>");
+                    restAddress.text(result.restaurants[j].restaurant.location.address);
+                    itemCont.append(restAddress);
+                    
+                    var url = result.restaurants[j].restaurant.menu_url;
+                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                    itemCont.append(restUrl);
+        
+                    var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+result.restaurants[j].restaurant.name+"><h4>Add to My Favorites</h4></button>")
+                    itemCont.append(addFavRest);
+                    
+                    itemDiv.append(itemCont);
+                    $(".menu-display").append(itemDiv);
+                }
             });
-        }else if($("#searchByName").val()){
+        
+        }
+
+        //******** API call which searches specific restaurant entered by user based on current location *********// 
+        else if($("#searchByName").val()){
             console.log("Restaurant by Name");
 
             var restaurantName = ($("#searchByName").val()).toLowerCase();
@@ -150,11 +133,7 @@ $(document).ready(function() {
             }).then(function(result){
                 console.log(result);
                 for(var j=0; j<result.restaurants.length; j++){
-                    // console.log(result.restaurants[j]);
-
-                    // console.log(restaurantName);
-                    // console.log((result.restaurants[j].restaurant.name).toLowerCase()+" is type of "+typeof(result.restaurants[j].restaurant.name));
-
+                    
                     if(restaurantName===(result.restaurants[j].restaurant.name).toLowerCase()){
                         console.log("restaurant found");
                         var itemDiv = $("<div class= card search-snippet-card search-card>");
@@ -182,11 +161,10 @@ $(document).ready(function() {
                     }
                 }
             });
-
-        }
-            
+        }            
     });
 
+    //********** On click function to add the selected restaurant to My Favorites list and generate button **********//
     $(document).on("click", "#addFav", function(){
         console.log(this);
         console.log($(this).attr("data-value"));
@@ -224,7 +202,6 @@ $(document).ready(function() {
                 center: currentLocation,
                 zoom: 12
             });
-
             
             console.log("my fav place: "+favRestaurant);
             infowindow = new google.maps.InfoWindow();
@@ -245,20 +222,34 @@ $(document).ready(function() {
         }
         
         function createMarker(place) {
-            var placeLoc = place.geometry.location;
+            // var placeLoc = place.geometry.location;
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location
             });
             
             google.maps.event.addListener(marker, 'click', function() {
-                infowindow.setContent(place.name);
+                var service = new google.maps.places.PlacesService(map);
+                
+                service.getDetails({
+                    placeId: favRestaurant
+                  }, function(place, status) {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                      var marker = new google.maps.Marker({
+                        map: map,
+                        position: place.geometry.location
+                      });
+                    }
+                })
+
+                infowindow.setContent("<div><strong>"+place.name+"</strong><br>"+place.formatted_address+"</div>");
                 infowindow.open(map, this);
             });
         }
         
     });
 
+    //********** Adds the typed restaurant name to My Favorites List ***************/
     $("#sendGet").on("click", function(event) {
         event.preventDefault();
         var newTopic = $("#addRestaurant").val().trim();
@@ -275,6 +266,7 @@ $(document).ready(function() {
 
     });
 
+    //************* Deletes the typed restaurant name from the My Favorites List  **************/
     $("#deleteBtn").on("click", function(event) {
         event.preventDefault();
         var deleteTopic = $("#addRestaurant").val().trim();
