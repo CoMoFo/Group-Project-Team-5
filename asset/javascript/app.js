@@ -62,6 +62,67 @@ $(document).ready(function() {
         $(".menu-display").empty();
         if($("#searchByName").val() && $("#location").val()){
             console.log("specific restaurant in a specfic city");
+
+            var restaurantName = ($("#searchByName").val()).toLowerCase();
+            var city = $("#location").val();
+            var currentLat = localStorage.getItem("userLat");
+            var currentLong = localStorage.getItem("userLong");
+    
+            var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
+            console.log(query);
+    
+            $.ajax({
+                url: query,
+                method: "GET"
+            }).then(function(result){
+                console.log(result);
+
+                var searchLat = result.location_suggestions[0].latitude;
+                var searchLong = result.location_suggestions[0].longitude;
+
+                console.log(searchLat);
+                console.log(searchLong);
+                
+                var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+searchLat+"&lon="+searchLong;
+                console.log(queryDetail);
+
+                $.ajax({
+                    url: queryDetail,
+                    method: "GET"
+                }).then(function(result){
+                    console.log(result);
+                    for(var j=0; j<result.restaurants.length; j++){
+                        
+                        if(restaurantName===(result.restaurants[j].restaurant.name).toLowerCase()){
+                            console.log("restaurant found");
+                            var itemDiv = $("<div class= card search-snippet-card search-card>");
+                            
+                            var itemCont = $("<div class= content>");
+                            
+                            var restName = $("<h1 class=restName>");
+                            restName.text(result.restaurants[j].restaurant.name);
+                            itemCont.append(restName);
+                            
+                            var restAddress = $("<h2 class = restAddress>");
+                            restAddress.prepend(result.restaurants[j].restaurant.location.address);
+                            itemCont.append(restAddress);
+                            
+                            var url = result.restaurants[j].restaurant.menu_url;
+                            var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                            itemCont.append(restUrl);
+                        
+                            
+                            var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
+
+                            // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
+                            itemCont.append(addFavRest);
+                            
+                            itemDiv.append(itemCont);
+                            $(".menu-display").append(itemDiv);
+                        }
+                    }
+                });
+            })
         }
         //******** API call which searches for restaurant based on the city entered ********//
         else if($("#location").val()){
@@ -69,8 +130,6 @@ $(document).ready(function() {
             console.log("Restaurant by city");
 
             var city = $("#location").val();
-            var currentLat = localStorage.getItem("userLat");
-            var currentLong = localStorage.getItem("userLong");
     
             var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
             console.log(query);
@@ -188,7 +247,7 @@ $(document).ready(function() {
     $(document).on("click", "#addFav", function(){
         console.log(this);
         console.log($(this).attr("data-value"));
-        newFav = $(this).attr("data-value");
+        newFav = $(this).attr("data-value").toLowerCase();
         if(localStorage.getItem("favRest")) {           
             restaurantButton.topics.push(newFav);
             var storeFav = localStorage.getItem("favRest");
@@ -291,7 +350,7 @@ $(document).ready(function() {
     //************* Deletes the typed restaurant name from the My Favorites List  **************/
     $("#deleteBtn").on("click", function(event) {
         event.preventDefault();
-        var deleteTopic = $("#addRestaurant").val().trim();
+        var deleteTopic = $("#addRestaurant").val().trim().toLowerCase();
         // console.log(deleteTopic);
 
         if(localStorage.getItem("favRest")){
