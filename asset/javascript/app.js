@@ -151,7 +151,7 @@ $(document).ready(function() {
                         var url = result.restaurants[j].restaurant.menu_url;
                         var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
                         itemCont.append(restUrl);
-    
+                        
                         var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+result.restaurants[j].restaurant.name+"><h4>Add to My Favorites</h4></button>")
                         // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
                         itemCont.append(addFavRest);
