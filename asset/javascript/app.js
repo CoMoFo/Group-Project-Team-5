@@ -92,41 +92,39 @@ $(document).ready(function() {
                 var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+searchLat+"&lon="+searchLong;
                 console.log(queryDetail);
     
-            $.ajax({
-                url: queryDetail,
-                method: "GET"
-            }).then(function(result){
-                console.log(result);
-                for(var j=0; j<result.restaurants.length; j++){
-                    console.log(result.restaurants[j]);
-        
-                    var itemDiv = $("<div class= card search-snippet-card search-card>");
-                    
-                    var itemCont = $("<div class= content>");
-                    
-                    var restName = $("<h1 class=restName>");
-                    restName.text(result.restaurants[j].restaurant.name);
-                    itemCont.append(restName);
-                    
-                    var restAddress = $("<h2 class = restAddress>");
-                    restAddress.text(result.restaurants[j].restaurant.location.address);
-                    itemCont.append(restAddress);
-                    
-                    var url = result.restaurants[j].restaurant.menu_url;
-                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
-                    itemCont.append(restUrl);
-                    
-                    console.log(JSON.stringify(result.restaurants[j].restaurant.name));
-                    var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
-                    itemCont.append(addFavRest);
-                    
-                    itemDiv.append(itemCont);
-                    $(".menu-display").append(itemDiv);
-                }
-            });
-
-        });
-        
+                $.ajax({
+                    url: queryDetail,
+                    method: "GET"
+                }).then(function(result){
+                    console.log(result);
+                    for(var j=0; j<result.restaurants.length; j++){
+                        console.log(result.restaurants[j]);
+            
+                        var itemDiv = $("<div class= card search-snippet-card search-card>");
+                        
+                        var itemCont = $("<div class= content>");
+                        
+                        var restName = $("<h1 class=restName>");
+                        restName.text(result.restaurants[j].restaurant.name);
+                        itemCont.append(restName);
+                        
+                        var restAddress = $("<h2 class = restAddress>");
+                        restAddress.text(result.restaurants[j].restaurant.location.address);
+                        itemCont.append(restAddress);
+                        
+                        var url = result.restaurants[j].restaurant.menu_url;
+                        var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                        itemCont.append(restUrl);
+                        
+                        console.log(JSON.stringify(result.restaurants[j].restaurant.name));
+                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
+                        itemCont.append(addFavRest);
+                        
+                        itemDiv.append(itemCont);
+                        $(".menu-display").append(itemDiv);
+                    }
+                });
+            });        
         }
 
         //******** API call which searches specific restaurant entered by user based on current location *********// 
