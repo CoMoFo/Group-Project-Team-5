@@ -117,3 +117,7 @@ span{
 .topRow{
     color: white;
 }
+
+#addFav{
+    margin-bottom: 10px;
+}

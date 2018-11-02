@@ -12,8 +12,8 @@ function initMapCord(){
             localStorage.setItem("userLong", position.coords.longitude);
             
             // These are the variables we will use for Latitude and Longitude.
-            console.log("This is user Latitude", localStorage.getItem("userLat"))
-            console.log("This is user Longitude", localStorage.getItem("userLong"))
+            // console.log("This is user Latitude", localStorage.getItem("userLat"))
+            // console.log("This is user Longitude", localStorage.getItem("userLong"))
           }
         )}
 }
@@ -23,14 +23,14 @@ function initMapCord(){
 $(document).ready(function() {
 
 //********************** Object to hold the favorite restaurant or food chains ******************************//
-var restaurantButton = {
-    topics: ['mcdonalds',
-            'burger king',
-            'wendys',
-            'arbys',
-            'olive garden',
-            'papa johns',
-        ],
+    var restaurantButton = {
+        topics: ['mcdonalds',
+                'burger king',
+                'wendys',
+                'arbys',
+                'olive garden',
+                'papa johns',
+            ],
 
         buttonGenerator: function() {
             $('#buttonGroup').empty();
@@ -41,49 +41,107 @@ var restaurantButton = {
                     text: this.topics[i]
                 });
                 $('#buttonGroup').append(bttn);
-
-                // localStorage.setItem("restaurants", $("#buttonGroup"));
-                // for(var k=0; k<$("#buttonGroup").length; )
-                // console.log($("#buttonGroup"))
-                localStorage.setItem("restaurants", restaurantButton.topics);
-                
             }
         }
     };
-    
     restaurantButton.buttonGenerator();
+        
+    saveToLocalStorage();
+    function saveToLocalStorage(){
+        if(localStorage.getItem("favRest")){
+            var getRest = localStorage.getItem("favRest");
+            restaurantButton.topics = getRest.split(",").splice(0);
+            restaurantButton.buttonGenerator();
+        }
+        else{
+            localStorage.setItem("favRest", restaurantButton.topics)
+        }        
+    }
     
-    localStorage.setItem("restaurants", restaurantButton.topics);
-
     //********* On click of submit Ajax call to Zomato API to get restaurant details *************//
-
+    
     $(document).on("click", "#submitSearch", function(e){
         e.preventDefault();
-
+        
         $(".menu-display").empty();
+        if($("#searchByName").val() && $("#location").val()){
+            console.log("specific restaurant in a specfic city");
+        }
+        else if($("#location").val()){
 
-        var city = $("#location").val();
-        var currentLat = localStorage.getItem("userLat");
-        var currentLong = localStorage.getItem("userLong");
+            console.log("Restaurant by city");
 
-        var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
-        console.log(query);
+            var city = $("#location").val();
+            var currentLat = localStorage.getItem("userLat");
+            var currentLong = localStorage.getItem("userLong");
+    
+            var query = "https://developers.zomato.com/api/v2.1/locations?apikey=23c62f98e8626382f65fe3b8fb2ba93f&query="+city;
+            console.log(query);
+    
+            $.ajax({
+                url: query,
+                method: "GET"
+            }).then(function(result){
+                console.log(result);
+    
+                var searchCity;
+                var searchLat;
+                var searchLong;
+    
+                searchCity = result.location_suggestions[0].city_name;
+                searchLat = result.location_suggestions[0].latitude;
+                searchLong = result.location_suggestions[0].longitude;
+                
+                var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+searchLat+"&lon="+searchLong;
+                console.log(queryDetail);
+    
+                $.ajax({
+                    url: queryDetail,
+                    method: "GET"
+                }).then(function(result){
+                    console.log(result);
+                    for(var j=0; j<result.restaurants.length; j++){
+                        console.log(result.restaurants[j]);
 
-        $.ajax({
-            url: query,
-            method: "GET"
-        }).then(function(result){
-            console.log(result);
+                        var itemDiv = $("<div class= card search-snippet-card search-card>");
+                        
+                        var itemCont = $("<div class= content>");
+                        
+                        var restName = $("<h1 class=restName>");
+                        restName.text(result.restaurants[j].restaurant.name);
+                        itemCont.append(restName);
+                        
+                        var restAddress = $("<h2 class = restAddress>");
+                        restAddress.text(result.restaurants[j].restaurant.location.address);
+                        itemCont.append(restAddress);
+                        
+                        var url = result.restaurants[j].restaurant.menu_url;
+                        var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                        itemCont.append(restUrl);
+    
+                        var addFavRest = $("<button id=addFav class=btn btn-outline-success value="+(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
+                        itemCont.append(addFavRest);
+                        
+                        itemDiv.append(itemCont);
+                        $(".menu-display").append(itemDiv);
+                    }
+                });
+            });
+        }else if($("#searchByName").val()){
+            console.log("Restaurant by Name");
 
-            var searchCity;
-            var searchLat;
-            var searchLong;
+            var restaurantName = ($("#searchByName").val()).toLowerCase();
+            console.log(restaurantName+" is type of "+typeof(restaurantName));
+            var currentLat = localStorage.getItem("userLat");
+            var currentLong = localStorage.getItem("userLong");
 
-            searchCity = result.location_suggestions[0].city_name;
-            searchLat = result.location_suggestions[0].latitude;
-            searchLong = result.location_suggestions[0].longitude;
+            // searchLat = localStorage.getItem("userLat");
+            // searchLong = localStorage.getItem("userLong");;
+
+            console.log(currentLat);
+            console.log(currentLong);
             
-            var queryDetail = "https://developers.zomato.com/api/v2.1/geocode?apikey=23c62f98e8626382f65fe3b8fb2ba93f"+"&lat="+searchLat+"&lon="+searchLong;
+            var queryDetail = "https://developers.zomato.com/api/v2.1/search?apikey=23c62f98e8626382f65fe3b8fb2ba93f&start=0&count=20"+"&lat="+currentLat+"&lon="+currentLong;
             console.log(queryDetail);
 
             $.ajax({
@@ -91,47 +149,60 @@ var restaurantButton = {
                 method: "GET"
             }).then(function(result){
                 console.log(result);
-                for(var j=0; j<result.nearby_restaurants.length; j++){
-                    console.log(result.nearby_restaurants[j]);
+                for(var j=0; j<result.restaurants.length; j++){
+                    // console.log(result.restaurants[j]);
 
-                    var itemDiv = $("<div class= card search-snippet-card search-card>");
-                    
-                    var itemCont = $("<div class= content>");
-                    
-                    var restName = $("<h1 class=restName>");
-                    restName.text(result.nearby_restaurants[j].restaurant.name);
-                    itemCont.append(restName);
-                    
-                    var restAddress = $("<h2 class = restAddress>");
-                    restAddress.prepend(result.nearby_restaurants[j].restaurant.location.address);
-                    itemCont.append(restAddress);
-                    
-                    var url = result.nearby_restaurants[j].restaurant.menu_url;
-                    var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
-                    itemCont.append(restUrl);
+                    // console.log(restaurantName);
+                    // console.log((result.restaurants[j].restaurant.name).toLowerCase()+" is type of "+typeof(result.restaurants[j].restaurant.name));
 
-                    var addFavRest = $("<button id=addFav class=btn btn-outline-success><h4>Add to My Favorites</h4></button>")
-                    itemCont.append(addFavRest);
-                    
-                    itemDiv.append(itemCont);
-                    $(".menu-display").append(itemDiv);
+                    if(restaurantName===(result.restaurants[j].restaurant.name).toLowerCase()){
+                        console.log("restaurant found");
+                        var itemDiv = $("<div class= card search-snippet-card search-card>");
+                        
+                        var itemCont = $("<div class= content>");
+                        
+                        var restName = $("<h1 class=restName>");
+                        restName.text(result.restaurants[j].restaurant.name);
+                        itemCont.append(restName);
+                        
+                        var restAddress = $("<h2 class = restAddress>");
+                        restAddress.prepend(result.restaurants[j].restaurant.location.address);
+                        itemCont.append(restAddress);
+                        
+                        var url = result.restaurants[j].restaurant.menu_url;
+                        var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
+                        itemCont.append(restUrl);
+    
+                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+result.restaurants[j].restaurant.name+"><h4>Add to My Favorites</h4></button>")
+                        // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
+                        itemCont.append(addFavRest);
+                        
+                        itemDiv.append(itemCont);
+                        $(".menu-display").append(itemDiv);
+                    }
                 }
             });
-        });
+
+        }
+            
     });
 
-    // $(document).on("click", "#addFav", function(){
-    //     console.log($(".restName"));
-    //     // var newTopic = $("#addRestaurant").val().trim();
-    //     // console.log(newTopic);
+    $(document).on("click", "#addFav", function(){
+        console.log(this);
+        console.log($(this).attr("data-value"));
+        newFav = $(this).attr("data-value");
+        if(localStorage.getItem("favRest")) {           
+            restaurantButton.topics.push(newFav);
+            var storeFav = localStorage.getItem("favRest");
+            storeFav = storeFav+","+newFav;
+            localStorage.setItem("favRest", storeFav);
+            $("#addRestaurant").val('');
+            saveToLocalStorage();
+        }
+        
+    })
 
-    //     // if (newTopic.length > 0) {
-    //     //     restaurantButton.topics.push(newTopic);
-    //     //     $("#addRestaurant").val('');
-    //     //     restaurantButton.buttonGenerator();
-    //     // }
-    // })
-    //************* On click function of buttons on my Favorite page ******************//
+    //************* On click function for favorite restaurant buttons on my Favorite page ******************//
     $(document).on("click", ".abstract", function() {
 
         var favRestaurant = $(this).attr("data-value");
@@ -191,27 +262,34 @@ var restaurantButton = {
     $("#sendGet").on("click", function(event) {
         event.preventDefault();
         var newTopic = $("#addRestaurant").val().trim();
-        console.log(newTopic);
+        // console.log(newTopic);
 
-        if (newTopic.length > 0) {
+        if (localStorage.getItem("favRest")) {           
             restaurantButton.topics.push(newTopic);
+            var storeFav = localStorage.getItem("favRest");
+            storeFav = storeFav+","+newTopic;
+            localStorage.setItem("favRest", storeFav);
             $("#addRestaurant").val('');
-            restaurantButton.buttonGenerator();
+            saveToLocalStorage();
         }
+
     });
 
     $("#deleteBtn").on("click", function(event) {
-        // event.preventDefault();
+        event.preventDefault();
         var deleteTopic = $("#addRestaurant").val().trim();
-        console.log(deleteTopic);
+        // console.log(deleteTopic);
 
-        for(var i=0; i<restaurantButton.topics.length; i++){
-            if(deleteTopic == restaurantButton.topics[i]){
-                console.log(restaurantButton.topics);
-                restaurantButton.topics.splice(i,1);
+        if(localStorage.getItem("favRest")){
+            for(var i=0; i<restaurantButton.topics.length; i++){
+                if(deleteTopic == restaurantButton.topics[i]){
+                    restaurantButton.topics.splice(i,1);
+                    restaurantButton.buttonGenerator();
+                    var deleteFav = restaurantButton.topics;
+                    localStorage.setItem("favRest", deleteFav)
+                }
             }
         }
-        restaurantButton.buttonGenerator();
     });
 
 });
