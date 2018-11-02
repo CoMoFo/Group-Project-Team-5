@@ -62,7 +62,11 @@ span{
 }
 
 .menu-display{
+<<<<<<< HEAD
     background: #415197;
+=======
+    background:rgba(131, 125, 125, 0.5);
+>>>>>>> Vinit
     padding:30px 50px;
     margin-left: 15px;
     margin-right: 15px;
@@ -73,12 +77,20 @@ span{
 }
 
 #header{
+<<<<<<< HEAD
     position:relative;
+=======
+    position: relative;
+>>>>>>> Vinit
     top: -200px;
 }
 
 .navbar{
+<<<<<<< HEAD
     color:#fff; 
+=======
+    color:#094c7e;
+>>>>>>> Vinit
 }
 
 .container{
@@ -117,6 +129,7 @@ span{
 .topRow{
     color: white;
 }
+<<<<<<< HEAD
 .card{
     color:rgba(4, 185, 4, 0.616)
 }
@@ -128,4 +141,9 @@ span{
 }
 .restAddress{
     color:purple
+=======
+
+#addFav{
+    margin-bottom: 10px;
+>>>>>>> Vinit
 }
