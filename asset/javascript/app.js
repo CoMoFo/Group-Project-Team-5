@@ -325,7 +325,7 @@ $(document).ready(function() {
     //********** Adds the typed restaurant name to My Favorites List ***************/
     $("#sendGet").on("click", function(event) {
         event.preventDefault();
-        var newTopic = $("#addRestaurant").val().trim();
+        var newTopic = $("#addRestaurant").val().toLowerCase().trim();
         // console.log(newTopic);
 
         if (localStorage.getItem("favRest")) {           
@@ -342,7 +342,7 @@ $(document).ready(function() {
     //************* Deletes the typed restaurant name from the My Favorites List  **************/
     $("#deleteBtn").on("click", function(event) {
         event.preventDefault();
-        var deleteTopic = $("#addRestaurant").val().trim().toLowerCase();
+        var deleteTopic = $("#addRestaurant").val().toLowerCase().trim();
         // console.log(deleteTopic);
 
         if(localStorage.getItem("favRest")){
