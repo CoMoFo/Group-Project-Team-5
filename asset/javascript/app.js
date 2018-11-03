@@ -112,9 +112,7 @@ $(document).ready(function() {
                             itemCont.append(restUrl);
                         
                             
-                            var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
-
-                            // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
+                            var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
                             itemCont.append(addFavRest);
                             
                             itemDiv.append(itemCont);
@@ -175,7 +173,6 @@ $(document).ready(function() {
                         var restUrl = $("<a href="+'"'+url+'"'+"><h3>Click to see Menu</h3></a>");
                         itemCont.append(restUrl);
                         
-                        console.log(JSON.stringify(result.restaurants[j].restaurant.name));
                         var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
                         itemCont.append(addFavRest);
                         
@@ -230,9 +227,7 @@ $(document).ready(function() {
                         itemCont.append(restUrl);
                        
                         
-                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
-
-                        // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
+                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
                         itemCont.append(addFavRest);
                         
                         itemDiv.append(itemCont);
@@ -333,7 +328,7 @@ $(document).ready(function() {
     //********** Adds the typed restaurant name to My Favorites List ***************/
     $("#sendGet").on("click", function(event) {
         event.preventDefault();
-        var newTopic = $("#addRestaurant").val().trim();
+        var newTopic = $("#addRestaurant").val().trim().toLowerCase();
         // console.log(newTopic);
 
         if (localStorage.getItem("favRest")) {           
