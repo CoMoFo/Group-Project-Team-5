@@ -112,7 +112,7 @@ $(document).ready(function() {
                             itemCont.append(restUrl);
                         
                             
-                            var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
+                            var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
 
                             // addFavRest.attr("data-value", result.restaurants[j].restaurant.name);
                             itemCont.append(addFavRest);
@@ -220,7 +220,7 @@ $(document).ready(function() {
                         itemCont.append(restUrl);
                        
                         
-                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value"+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
+                        var addFavRest = $("<button id=addFav class=btn btn-outline-success data-value="+JSON.stringify(result.restaurants[j].restaurant.name)+"><h4>Add to My Favorites</h4></button>")
                         itemCont.append(addFavRest);
                         
                         itemDiv.append(itemCont);
