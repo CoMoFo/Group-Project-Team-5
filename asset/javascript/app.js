@@ -2,14 +2,15 @@
 //****************************************************//
 
 //*************** Google GeoLocation API which ask user to know the current latitude and longitude *************//
-
 function initMapCord(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position){
-            // This defines the local storage variables 
-            localStorage.setItem("userLat", position.coords.latitude);
-            localStorage.setItem("userLong", position.coords.longitude);
-        });
+    if(!(localStorage.getItem("userLat")&&localStorage.getItem("userLong"))){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position){
+                // This defines the local storage variables 
+                localStorage.setItem("userLat", position.coords.latitude);
+                localStorage.setItem("userLong", position.coords.longitude);
+            });
+        }
     }
 }
 
