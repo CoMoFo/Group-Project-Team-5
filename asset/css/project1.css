@@ -1,4 +1,4 @@
-body{
+.body{
     margin:0;
     padding:0;
 }
@@ -78,7 +78,7 @@ span{
 }
 
 .navbar{
-    color:#094c7e;
+    color:#2F4454
 }
 
 .container{
@@ -120,4 +120,31 @@ span{
 
 #addFav{
     margin-bottom: 10px;
+}
+.restName{
+    color:#DA7B93
+}
+.content{
+    background:rgba(47, 68, 84);
+}
+.restAddress{
+    color:#DA7B93
+}
+.h3{
+    color:#DA7B93
+}
+.menu-display{
+    background:rgba(46, 21, 27);
+}
+h4{
+color:#DA7B93
+}
+.btn.waves-effect{
+    color:#DA7B93
+}
+.button{
+    color:#2F4454
+}
+.abstract{
+    background-color:#2E151B
 }
